@@ -206,6 +206,7 @@ var _getCaptcha = function(){
   return defer.promise;
 }
 
+//Inseri informação do captcha
 var _setCaptcha = function(valor){
   captcha = valor || captcha;
 }
@@ -275,7 +276,7 @@ var _registerChave = function(chave){
   //Espera o carregamento do formulario
   driver.wait(until.elementLocated(By.xpath('//*[@id="divCNPJEstabelecimento"]/input'))).then(function(){
 
-    //Espera 2 segundo para recarregamento
+    //Espera 0.2 segundo para recarregamento
     driver.wait(until.elementLocated(By.xpath('Weird')), 200).catch(err=>{});
 
     //Limpa o campo da chave

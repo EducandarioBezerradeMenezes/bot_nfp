@@ -54,6 +54,7 @@ router.route('/cupom')
     Navigator.setCaptcha(req.body.valor);
 
     Cupom.selectCupom().then(cupons => {
+
       //Todos os Cupons ja Cadastrados
       if(!cupons[0]) res.json('OK');
 
