@@ -1,0 +1,25 @@
+{
+  "name": "bot_nfp",
+  "version": "1.0.0",
+  "description": "Bot que Cadastra cupons no site da receita federal",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js 1>>success.txt 2>>err.txt"
+  },
+  "author": "Emerson, Mateus",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "pg": "^6.1.0",
+    "selenium-webdriver": "^3.0.0-beta-3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EducandarioBezerradeMenezes/bot_nfp.git"
+  },
+  "keywords": [
+    "Cupom",
+    "BOT"
+  ]
+}

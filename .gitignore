@@ -1,0 +1,12 @@
+# Node build artifacts
+node_modules
+npm-debug.log
+
+#Local Development
+log.txt
+debug.log
+
+#Outputs of Process
+captcha.png
+err.txt
+success.txt
