@@ -20,6 +20,15 @@ router.route('/user')
     User.insertUser(req.body)
       .then(result =>{res.json(result)})
       .catch(err   =>{res.json(err)});
+  })
+
+  //PUT (atualiza) senha do usuario
+  .put(function(req, res){
+
+    //Atualização da senha
+    User.newPassword(req.body)
+      .then(result =>{res.json(result)})
+      .catch(err   =>{res.json(err)});
   });
 
 //Metodos para a rota /logIn
@@ -30,15 +39,6 @@ router.route('/logIn')
 
     //Log-in do Usuario
     User.logIn(req.body)
-      .then(result =>{res.json(result)})
-      .catch(err   =>{res.json(err)});
-  })
-
-  //PUT (atualiza) senha do usuario
-  .put(function(req, res){
-
-    //Atualização da senha
-    User.newPassword(req.body)
       .then(result =>{res.json(result)})
       .catch(err   =>{res.json(err)});
   });

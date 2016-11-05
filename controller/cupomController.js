@@ -14,8 +14,8 @@ var router  = express.Router();
 //Metodos para rota /cupom
 router.route('/cupom')
 
-  //GET (Seleciona) estados de cupons
-  .get(function(req, res){
+  //(PUT) seleciona estados de cupons
+  .put(function(req, res){
 
     //Retorna estados e suas quantidades
     Cupom.qtdCupom(req.body).then(result =>{
@@ -26,8 +26,8 @@ router.route('/cupom')
 //Metodos para a rota /chave
 router.route('/chave')
 
-  //GET (Seleciona) estado das chaves
-  .get(function(req, res){
+  //(PUT) seleciona estado das chaves
+  .put(function(req, res){
 
     //Retorna estados e suas quantidades
     Chave.qtdChave(req.body).then(result =>{

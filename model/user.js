@@ -33,7 +33,7 @@ var _insertUser = function(user){
   _createTable(client);
 
   //Query PostgreSQL para inserção de novo usuario
-  client.query('INSERT INTO user (email, name, password) values ($1, $2, $3)', [user.email, user.name, user.password]).then(function(){
+  client.query('INSERT INTO users (email, name, password) values ($1, $2, $3)', [user.email, user.name, user.password]).then(function(){
 
     //Fecha conexão
     client.end();
