@@ -22,8 +22,8 @@ var _selectCupom = function(estado){
   var query;
 
   //Seleciona cupons
-  if(!estado) query = client.query('SELECT * from cupons WHERE estado!=1 AND estado!=2');
-  if(estado)  query = client.query('SELECT * from cupons WHERE estado=$1', [estado]);
+  if(!estado) query = client.query('SELECT * FROM cupons WHERE estado!=1 AND estado!=2');
+  if(estado)  query = client.query('SELECT * FROM cupons WHERE estado=$1', [estado]);
 
   //Adciona cada linha da tabela
   query.on('row', function (row, result) {
@@ -103,7 +103,7 @@ var _deleteCupom = function(cupom){
   return defer.promise;
 }
 
-var _qtdCupom = function(){
+var _qtdCupom = function(date){
 
   //Conecta com Postgres
   var client = new pg.Client(connectionString);
@@ -112,11 +112,9 @@ var _qtdCupom = function(){
   //Cria uma Promessa
   var defer = Promise.defer();
 
-  //Query seleciona todos os cupons
-  var query;
-
   //Quantidade de cada estado
-  query = client.query('SELECT estado, COUNT(*) AS quantity FROM cupons GROUP BY estado');
+  if(!date.year) var query = client.query('SELECT estado, COUNT(*) AS quantity FROM cupons GROUP BY estado');
+  else           var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year, EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM cupons GROUP BY estado, year, month HAVING EXTRACT(YEAR FROM data)=$1 AND EXTRACT(MONTH FROM data)=$2',[date.year, date.month]);
 
   //Adciona cada linha da tabela
   query.on('row', function (row, result) {

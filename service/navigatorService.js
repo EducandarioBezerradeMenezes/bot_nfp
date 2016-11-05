@@ -103,7 +103,7 @@ var _saveCupom = function(){
     driver.findElement(By.xpath('//*[@id="lblErroMaster"]')).getText().then(function(innerHtml){
 
       //Rejeita Promessa
-      if(innerHtml) defer.reject(innerHtml);
+      if(innerHtml) defer.reject(innerHtml.replace(/\n\n\n\(Pressione ESC para fechar mensagem\)/,""));
 
       //Sair da Erro
       driver.findElement(By.xpath('/html/body/div[3]/div[11]/div/button/span')).click();

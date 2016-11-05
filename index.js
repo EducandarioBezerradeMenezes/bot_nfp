@@ -1,21 +1,23 @@
 //Index File
-//Create Server API/BOT
+//Cria um Server API/BOT
 
-//Require Node Modules
+//Modulos
 var express    = require('express');
 var bodyParser = require('body-parser');
 
-//Add Controllers
-var cupom    = require('./controller/cupomController');
+//Adiciona Controllers
+var cupom = require('./controller/cupomController');
+var bot   = require('./controller/botController');
+var user  = require('./controller/userController');
 
-// Create the Application.
+//Cria aplicação
 var app = express();
 
-//Indentify the body of the Request
+//Identifica o corpo das requests (JSON)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Allow diferent origins, methods and headers
+//Permite requisição de diferentes metodos origens e cabeçalhos
 app.all('*', function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
@@ -23,15 +25,17 @@ app.all('*', function(req, res, next) {
   next();
 });
 
-//REST API
+//API Rest
 app.use(cupom);
+app.use(bot);
+app.use(user);
 
-//If Not Found send error 404
+//Erro 404 para paginas não encontradas
 app.use(function(req, res){
   res.sendStatus(404);
 });
 
-//Launch Server
+//Server Online
 app.listen(process.env.PORT || 8000, function(){
-  
+
 });

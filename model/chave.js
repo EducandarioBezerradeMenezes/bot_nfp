@@ -102,7 +102,7 @@ var _deleteChave = function(chave){
 }
 
 //Seleciona todas as chaves
-var _qtdChave = function(){
+var _qtdChave = function(date){
 
   //Conecta com Postgres
   var client = new pg.Client(connectionString);
@@ -112,7 +112,9 @@ var _qtdChave = function(){
   var defer = Promise.defer();
 
   //Quantidade de cada estado
-  var query = client.query('SELECT estado, COUNT(*) AS quantity FROM chaves GROUP BY estado');
+  if(!date.year) var query = client.query('SELECT estado, COUNT(*) AS quantity FROM chaves GROUP BY estado');
+  else           var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year,  EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM chaves GROUP BY estado, year, month');
+
 
   //Adciona cada linha da tabela
   query.on('row', function (row, result) {
