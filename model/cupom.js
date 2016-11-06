@@ -113,8 +113,9 @@ var _qtdCupom = function(date){
   var defer = Promise.defer();
 
   //Quantidade de cada estado
-  if(!date.year) var query = client.query('SELECT estado, COUNT(*) AS quantity FROM cupons GROUP BY estado');
-  else           var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year, EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM cupons GROUP BY estado, year, month HAVING EXTRACT(YEAR FROM data)=$1 AND EXTRACT(MONTH FROM data)=$2',[date.year, date.month]);
+  if(date.year)      var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year, EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM cupons GROUP BY estado, year, month HAVING EXTRACT(YEAR FROM data)=$1 AND EXTRACT(MONTH FROM data)=$2',[date.year, date.month]);
+  else if(date.show) var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year, EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM cupons GROUP BY estado, year, month');
+  else               var query = client.query('SELECT estado, COUNT(*) AS quantity FROM cupons GROUP BY estado');
 
   //Adciona cada linha da tabela
   query.on('row', function (row, result) {

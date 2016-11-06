@@ -22,8 +22,8 @@ var page  = 'https://www.nfp.fazenda.sp.gov.br/';
 var captcha = '';
 
 //Cria um novo chromedriver (Navegador)
-var driver = new PhantomJs.Driver();//Navegador Fantasma
-//var driver = new webdriver.Builder().forBrowser('chrome').build();//Google Chrome
+//var driver = new PhantomJs.Driver();//Navegador Fantasma
+var driver = new webdriver.Builder().forBrowser('chrome').build();//Google Chrome
 
 //Direciona para a tela de login
 driver.get(page + 'login.aspx');

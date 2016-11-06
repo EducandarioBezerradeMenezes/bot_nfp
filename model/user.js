@@ -54,6 +54,8 @@ var _insertUser = function(user){
 //Lon-In de usuario
 var _logIn = function(user){
 
+  /*Encriptar Senha*/
+
   //Conexão
   var client = new pg.Client(connectionString);
   client.connect();
@@ -65,7 +67,7 @@ var _logIn = function(user){
   var defer = Promise.defer();
 
   //Query PostgreSQL para selecionar usuario
-  var query = client.query('SELECT * from user WHERE email=$1 OR name=$2',[user.email, user.name]);
+  var query = client.query('SELECT * from users WHERE email=$1 OR name=$2',[user.email, user.name]);
 
   //Adiciona usuario
   query.on('row', function (row, result) {
@@ -81,7 +83,7 @@ var _logIn = function(user){
 
     //Verifica Validade do Usuario
     if(!result.rows[0]) defer.reject('user');
-    if(result.rows[0].password != user.password) defer.reject('password');
+    else if(result.rows[0].password != user.password) defer.reject('password');
 
     //Retorna usuario
     else{
@@ -96,6 +98,8 @@ var _logIn = function(user){
 
 //Cria uma nova senha
 var _newPassword = function(user){
+
+  /*Encriptar Senha*/
 
   //Conexão
   var client = new pg.Client(connectionString);
@@ -137,7 +141,7 @@ var _deleteUser = function(user){
   var defer = Promise.defer();
 
   //Query PostgreSQL para deletar um usuario
-  client.query('DELETE FROM users WHERE email=$1 AND password=$2',[user.email, user.password]).then(function(){
+  client.query('DELETE FROM users WHERE email=$1 AND name=$2',[user.email, user.name]).then(function(){
 
     //Fecha Conexão
     client.end();

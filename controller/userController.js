@@ -41,6 +41,12 @@ router.route('/logIn')
     User.logIn(req.body)
       .then(result =>{res.json(result)})
       .catch(err   =>{res.json(err)});
+  })
+
+  //(PUT) Recupera informações de Usuario
+  .put(function(req, res){
+    /*Enviara um email para o usuario
+    com informação de uma nova senha*/
   });
 
 //Metodos para a rota /admin
