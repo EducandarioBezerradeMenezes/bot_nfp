@@ -7,6 +7,9 @@ var express = require('express');
 //Modelo usuario
 var User = require('../model/user');
 
+//Servico de envio de email
+var Email = require('../service/emailService.js');
+
 //Rotas
 var router  = express.Router();
 
@@ -45,8 +48,23 @@ router.route('/logIn')
 
   //(PUT) Recupera informações de Usuario
   .put(function(req, res){
-    /*Enviara um email para o usuario
-    com informação de uma nova senha*/
+
+    //Cria uma senha aleatoria
+    req.body.password = Math.floor(Math.random() * 1000000000);
+
+    //Muda a antiga senha para a nova gerada
+    User.newPassword(req.body).then(result =>{
+
+      //Envia o email com a nova senha
+      Email.sendEmail(req.body).then(result =>{
+
+        console.log(result);
+
+      //Erro de envio
+      }).catch(err =>{console.log(err)});
+
+      res.json(req.body.password);
+    }).catch(err =>{res.json(err)});
   });
 
 //Metodos para a rota /admin
