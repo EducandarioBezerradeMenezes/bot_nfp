@@ -13,7 +13,9 @@ var mailOptions ={
   from: '"EBM NFP" <mateus.oli.car@gmail.com>', //Email emissor
   to: '',//Email receptor
   subject: 'Recuperação de senha',//Assunto
-  text: 'Nova Senha: '
+  html:'<img src="http://www.selosocial.com/upload/participante/logo/280_110/273471e46dbad29f79c3b84b622d241f.png"/>'
+        + '<br/>'
+        + '<p>Nova Senha: '
 }
 
 //Enviar email
@@ -26,9 +28,7 @@ var _sendEmail = function(user){
   mailOptions.to = user.email;
 
   //Nova senha
-  mailOptions.text = mailOptions.text + user.password;
-
-  console.log(mailOptions);
+  mailOptions.html = mailOptions.html + user.password + '</p>';
 
   //Envia o email para usuario informado
   transporter.sendMail(mailOptions, function(error, info){

@@ -10,7 +10,9 @@
 
   <ul>• Chrome WebDriver 2.24;</ul>
 
-  <ul>• PG 6.1.0.</ul>
+  <ul>• PG 6.1.0;</ul>
+
+  <ul>• Nodemailer 2.6.4;</ul>
 
   <ul>• Atom 1.12.0.</ul>
 
@@ -20,10 +22,10 @@
   (GET) Visualização de fotos dos captchas mostrados pelo site da receita e (POST) o envio dos valores representados por estes captchas para a inserção dos cupons e chaves cadastrados no site da receita; </ul>
 
   <ul>• "/User":
-  (POST) Inserção de novos usuarios que utilizarão o sistema e alteração da senha destes usuarios;</ul>
+  (POST) Inserção de novos usuarios que utilizarão o sistema e (PUT) alteração da senha destes usuarios;</ul>
 
   <ul>• "/LogIn":
-  (PUT) Realização do Log-In verificando as informações enviadas;</ul>
+  (POST) Realização do Log-In verificando as informações enviadas e (PUT) recuperação da conta, atraves de um email;</ul>
 
   <ul>• "/Chave":
   (PUT) Informações relevantes relacionadas ao estado de cadastro das chaves;</ul>

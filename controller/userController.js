@@ -58,32 +58,13 @@ router.route('/logIn')
       //Envia o email com a nova senha
       Email.sendEmail(req.body).then(result =>{
 
-        console.log(result);
+        res.json("OK");
 
       //Erro de envio
-      }).catch(err =>{console.log(err)});
+      }).catch(err =>{res.json(err)});
 
-      res.json(req.body.password);
+    //Erro de troca de senha
     }).catch(err =>{res.json(err)});
-  });
-
-//Metodos para a rota /admin
-router.route('/admin')
-
-  //(GET) Cria um usuario admin para testes
-  .get(function(req, res){
-
-    //Usuario administrador
-    var admin = {
-      email:    'mateus.oli.car@gmail.com',
-      name:     'admin',
-      password: 'admin'
-    };
-
-    //Inserio o usuario
-    User.insertUser(admin)
-      .then(result =>{res.json(result)})
-      .catch(err   =>{res.json(err)});
   });
 
 //Exporting Routes
