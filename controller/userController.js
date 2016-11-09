@@ -57,7 +57,7 @@ router.route('/logIn')
       //Altera a senha
       .then(User.newPassword(req.body))
       //Envia o email com senha
-      .then(Email.sendPassword(req.body))
+      .then(Email.sendEmail(req.body))
       //Envia resposta de sucesso
       .then(result =>{
         res.json('OK');

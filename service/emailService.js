@@ -15,7 +15,8 @@ var mailOptions ={
   subject: 'Recuperação de senha',//Assunto
   html:'<img src="http://www.selosocial.com/upload/participante/logo/280_110/273471e46dbad29f79c3b84b622d241f.png"/>'
         + '<br/>'
-        + '<p>Nova Senha: '
+        + '<p>',
+  text:''
 }
 
 //Enviar email
@@ -28,7 +29,7 @@ var _sendEmail = function(user){
   mailOptions.to = user.email;
 
   //Nova senha
-  mailOptions.html = mailOptions.html + user.password + '</p>';
+  mailOptions.html = mailOptions.html + 'Nova Senha: ' + user.password + '</p>';
 
   //Envia o email para usuario informado
   transporter.sendMail(mailOptions, function(error, info){

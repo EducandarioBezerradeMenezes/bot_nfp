@@ -1,8 +1,14 @@
 //User Model
 //Comunicação com banco de dados
 
-//usa o modulo pg (PostgreSQL)
+//Usa o modulo pg (PostgreSQL)
 var pg = require('pg');
+
+//Encriptação de senhas
+var CryptoJS = require('crypto-js');
+
+//Chave de Segurança
+var key = 'A resposta para a vida o universo e tudo mais é 42';
 
 //Conexão com PostgreSQL
 pg.defaults.ssl = true;
@@ -33,7 +39,7 @@ var _insertUser = function(user){
   _createTable(client);
 
   //Query PostgreSQL para inserção de novo usuario
-  client.query('INSERT INTO users (email, name, password) values ($1, $2, $3)', [user.email, user.name, user.password]).then(function(){
+  client.query('INSERT INTO users (email, name, password) values ($1, $2, $3)', [user.email, user.name, password]).then(function(){
 
     //Fecha conexão
     client.end();
@@ -83,7 +89,7 @@ var _logIn = function(user){
 
     //Verifica Validade do Usuario
     if(!result.rows[0]) defer.reject('user');
-    else if(result.rows[0].password != user.password) defer.reject('password');
+    else if(result.rows[0].password != password) defer.reject('password');
 
     //Retorna usuario
     else{
