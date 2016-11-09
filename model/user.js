@@ -159,10 +159,46 @@ var _deleteUser = function(user){
   return defer.promise;
 }
 
+//Checa existencia de um usuario
+var _checkUser = function(user){
+
+  //Conexão
+  var client = new pg.Client(connectionString);
+  client.connect();
+
+  //Cria uma promessa
+  var defer = Promise.defer();
+
+  //Seleciona um usuario se este existe
+  var query = client.query('SELECT email from users WHERE email=$1', [user.email]);
+
+  //Adiciona usuario
+  query.on('row', function (row, result) {
+
+    result.addRow(row);
+  });
+
+  //Termino da query
+  query.on('end', function (result) {
+
+    //Fecha conexão
+    client.end();
+
+    //Retorna o usuario ou um erro
+    if(result.rows[0]) defer.resolve(result.rows[0]);
+    else defer.reject('user');
+  });
+
+  //Retorna promessa
+  return defer.promise;
+}
+
+
 //Funções a serem usadas por outros modulos
 module.exports = {
   insertUser:  _insertUser,
   logIn:       _logIn,
   newPassword: _newPassword,
-  deleteUser:  _deleteUser
+  deleteUser:  _deleteUser,
+  checkUser:   _checkUser
 }

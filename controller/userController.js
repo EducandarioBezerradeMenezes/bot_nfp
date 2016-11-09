@@ -52,19 +52,18 @@ router.route('/logIn')
     //Cria uma senha aleatoria
     req.body.password = Math.floor(Math.random() * 1000000000);
 
-    //Muda a antiga senha para a nova gerada
-    User.newPassword(req.body).then(result =>{
+    //Verifica existencia do usuario
+    User.checkUser(req.body)
+      //Altera a senha
+      .then(User.newPassword(req.body))
+      //Envia o email com senha
+      .then(Email.sendPassword(req.body))
+      //Envia resposta de sucesso
+      .then(result =>{
+        res.json('OK');
 
-      //Envia o email com a nova senha
-      Email.sendEmail(req.body).then(result =>{
-
-        res.json("OK");
-
-      //Erro de envio
+      //Envia um erro
       }).catch(err =>{res.json(err)});
-
-    //Erro de troca de senha
-    }).catch(err =>{res.json(err)});
   });
 
 //Exporting Routes

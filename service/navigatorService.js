@@ -4,9 +4,6 @@
 //Modulo Selenium
 var webdriver = require('selenium-webdriver');
 
-//Phantom js Browser
-var PhantomJs = require('selenium-webdriver/phantomjs');
-
 //Elementos uteis do selenium
 var By        = webdriver.By;
 var until     = webdriver.until;
@@ -22,8 +19,8 @@ var page  = 'https://www.nfp.fazenda.sp.gov.br/';
 var captcha = '';
 
 //Cria um novo chromedriver (Navegador)
-//var driver = new PhantomJs.Driver();//Navegador Fantasma
-var driver = new webdriver.Builder().forBrowser('chrome').build();//Google Chrome
+//var driver = new webdriver.Builder().forBrowser('chrome').build();//Google Chrome
+var driver = new webdriver.Builder().forBrowser('phantomjs').build();//Navegador Fantasma
 
 //Direciona para a tela de login
 driver.get(page + 'login.aspx');
