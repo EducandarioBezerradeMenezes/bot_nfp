@@ -50,7 +50,7 @@ router.route('/logIn')
   .put(function(req, res){
 
     //Cria uma senha aleatoria
-    req.body.password = Math.floor(Math.random() * 1000000000);
+    req.body.password = Math.floor(Math.random() * 1000000000).toString();
 
     //Verifica existencia do usuario
     User.checkUser(req.body)

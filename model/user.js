@@ -5,7 +5,7 @@
 var pg = require('pg');
 
 //Encriptação de senhas
-var CryptoJS = require('crypto-js');
+var bcrypt = require('bcryptjs');
 
 //Chave de Segurança
 var key = 'A resposta para a vida o universo e tudo mais é 42';
@@ -38,19 +38,26 @@ var _insertUser = function(user){
   //Cria tabela se não existe
   _createTable(client);
 
-  //Query PostgreSQL para inserção de novo usuario
-  client.query('INSERT INTO users (email, name, password) values ($1, $2, $3)', [user.email, user.name, user.password]).then(function(){
+  //Encripta a senha
+  bcrypt.hash(user.password, 10, (err, hash) =>{
 
-    //Fecha conexão
-    client.end();
+    //Erro para hash
+    if(err) defer.reject(err);
 
-    //Resolve Promessa com termino da query
-    defer.resolve('OK');
+    //Query PostgreSQL para inserção de novo usuario
+    if(!err) client.query('INSERT INTO users (email, name, password) values ($1, $2, $3)', [user.email, user.name, hash]).then(function(){
 
-  }).catch(err =>{
+      //Fecha conexão
+      client.end();
 
-    //Rejeita Promessa
-    defer.reject(err);
+      //Resolve Promessa com termino da query
+      defer.resolve('OK');
+
+    }).catch(err =>{
+
+      //Rejeita Promessa
+      defer.reject(err);
+    });
   });
 
   //Retorna promessa
@@ -59,8 +66,6 @@ var _insertUser = function(user){
 
 //Lon-In de usuario
 var _logIn = function(user){
-
-  /*Encriptar Senha*/
 
   //Conexão
   var client = new pg.Client(connectionString);
@@ -89,13 +94,22 @@ var _logIn = function(user){
 
     //Verifica Validade do Usuario
     if(!result.rows[0]) defer.reject('user');
-    else if(result.rows[0].password != user.password) defer.reject('password');
 
-    //Retorna usuario
-    else{
+    //Compara senha enviada com senha encriptada em banco
+    else bcrypt.compare(user.password, result.rows[0].password, (err, res) =>{
+
+      //Deleta a senha para enviar o usuario
       delete result.rows[0].password;
-      defer.resolve(result.rows[0])
-    };
+
+      //Erro de comparação com o hash
+      if(err) defer.reject(err);
+
+      //Retorna o usuario caso a comparaçao seja verdadeira
+      else if(res) defer.resolve(result.rows[0]);
+
+      //Retorna erro de password se comparação for falsa
+      else defer.reject('password');
+    });
   });
 
   //Retorna promessa
@@ -104,8 +118,6 @@ var _logIn = function(user){
 
 //Cria uma nova senha
 var _newPassword = function(user){
-
-  /*Encriptar Senha*/
 
   //Conexão
   var client = new pg.Client(connectionString);
@@ -117,19 +129,26 @@ var _newPassword = function(user){
   //Cria tabela se não existe
   _createTable(client);
 
-  //Query PostgreSQL para mudança de senha
-  client.query('UPDATE users SET password=$1 WHERE email=$2', [user.password, user.email]).then(function(){
+  //Encritpa a senha
+  bcrypt.hash(user.password, 10, (err, hash) =>{
 
-    //Fecha conexão
-    client.end();
+    //Erro para hash
+    if(err) defer.reject(err);
 
-    //Resolve Promessa com termino da query
-    defer.resolve('OK');
+    //Query PostgreSQL para mudança de senha
+    if(!err) client.query('UPDATE users SET password=$1 WHERE email=$2', [hash, user.email]).then(function(){
 
-  }).catch(err =>{
+      //Fecha conexão
+      client.end();
 
-    //Rejeita Promessa
-    defer.reject(err);
+      //Resolve Promessa com termino da query
+      defer.resolve('OK');
+
+    }).catch(err =>{
+
+      //Rejeita Promessa
+      defer.reject(err);
+    });
   });
 
   //Retorna promessa
