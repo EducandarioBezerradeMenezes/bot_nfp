@@ -195,7 +195,7 @@ var _checkUser = function(user){
   var defer = Promise.defer();
 
   //Seleciona um usuario se este existe
-  var query = client.query('SELECT email from users WHERE email=$1', [user.email]);
+  var query = client.query('SELECT email, name from users WHERE email=$1', [user.email]);
 
   //Adiciona usuario
   query.on('row', function (row, result) {
@@ -217,7 +217,6 @@ var _checkUser = function(user){
   //Retorna promessa
   return defer.promise;
 }
-
 
 //Funções a serem usadas por outros modulos
 module.exports = {

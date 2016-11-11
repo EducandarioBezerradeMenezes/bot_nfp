@@ -6,7 +6,6 @@ var nodemailer = require('nodemailer');
 
 //Objeto de Transporte para email
 var transporter = nodemailer.createTransport('smtps://mateus.oli.car%40gmail.com:picolo12@smtp.gmail.com');
-//var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
 
 //Informações do email
 var mailOptions ={
@@ -29,7 +28,7 @@ var _sendEmail = function(user){
   mailOptions.to = user.email;
 
   //Nova senha
-  mailOptions.html = mailOptions.html + 'Nova Senha: ' + user.password + '</p>';
+  mailOptions.html += 'Bom dia, ' + user.name + '</p><p>Nova Senha: ' + user.password + '</p>';
 
   //Envia o email para usuario informado
   transporter.sendMail(mailOptions, function(error, info){

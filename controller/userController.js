@@ -50,17 +50,23 @@ router.route('/logIn')
   .put(function(req, res){
 
     //Cria uma senha aleatoria
-    req.body.password = Math.floor(Math.random() * 1000000000).toString();
+    password = Math.floor(Math.random() * 1000000000).toString();
 
     //Verifica existencia do usuario
     User.checkUser(req.body)
-      //Altera a senha
-      .then(User.newPassword(req.body))
-      //Envia o email com senha
-      .then(Email.sendEmail(req.body))
-      //Envia resposta de sucesso
-      .then(result =>{
-        res.json('OK');
+      .then(result=>{
+
+        //Nova senha do usuario
+        result.password = password;
+
+        //Altera a senha
+        User.newPassword(result)
+        //Envia o email com senha
+        .then(Email.sendEmail(result))
+        //Envia resposta de sucesso
+        .then(result =>{
+          res.json('OK');
+        });
 
       //Envia um erro
       }).catch(err =>{res.json(err)});
