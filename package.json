@@ -4,7 +4,10 @@
   "description": "Bot que Cadastra cupons no site da receita federal",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js 1>>success.txt 2>>err.txt"
+    "start": "node index.js"
+  },
+  "bin": {
+
   },
   "author": "Emerson, Mateus",
   "license": "ISC",
@@ -14,6 +17,7 @@
     "express": "^4.14.0",
     "nodemailer": "^2.6.4",
     "pg": "^6.1.0",
+    "phantom": "^4.0.0",
     "selenium-webdriver": "^3.0.0-beta-3"
   },
   "repository": {

@@ -22,26 +22,24 @@ var mailOptions ={
 var _sendEmail = function(user){
 
   //Cria uma promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //Enviar para
-  mailOptions.to = user.email;
+    //Enviar para
+    mailOptions.to = user.email;
 
-  //Nova senha
-  mailOptions.html += 'Bom dia, ' + user.name + '</p><p>Nova Senha: ' + user.password + '</p>';
+    //Nova senha
+    mailOptions.html += 'Bom dia, ' + user.name + '</p><p>Nova Senha: ' + user.password + '</p>';
 
-  //Envia o email para usuario informado
-  transporter.sendMail(mailOptions, function(error, info){
+    //Envia o email para usuario informado
+    transporter.sendMail(mailOptions, function(error, info){
 
-    //Erro de envio
-    if(error) defer.reject(error);
+      //Erro de envio
+      if(error) reject(error);
 
-    //Envio com sucesso
-    else defer.resolve(info);
+      //Envio com sucesso
+      else resolve(info);
+    });
   });
-
-  //Retorna promessa
-  return defer.promise;
 }
 
 //Funções a serem usadas em outros modulos

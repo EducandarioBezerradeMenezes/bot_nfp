@@ -41,166 +41,157 @@ var _formatDate = function(date){
 var _toCupomRegister = function(usuario){
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //Tela login
-  driver.wait(until.elementLocated(By.xpath('//*[@id="UserName"]')));
-  driver.findElement(By.xpath('//*[@id="UserName"]')).sendKeys(usuario.cpf);
-  driver.findElement(By.xpath('//*[@id="Password"]')).sendKeys(usuario.senha);
-  driver.findElement(By.xpath('//*[@id="Login"]')).click();
+    //Tela login
+    driver.wait(until.elementLocated(By.xpath('//*[@id="UserName"]')));
+    driver.findElement(By.xpath('//*[@id="UserName"]')).sendKeys(usuario.cpf);
+    driver.findElement(By.xpath('//*[@id="Password"]')).sendKeys(usuario.senha);
+    driver.findElement(By.xpath('//*[@id="Login"]')).click();
 
-  //Espera a pagina principal
-  driver.wait(until.elementLocated(By.xpath('//*[@id="menuSuperior"]/ul/li[4]/a')));
+    //Espera a pagina principal
+    driver.wait(until.elementLocated(By.xpath('//*[@id="menuSuperior"]/ul/li[4]/a')));
 
-  //Redireciona ate tela de entidade
-  driver.get(page + 'EntidadesFilantropicas/CadastroNotaEntidadeAviso.aspx');
+    //Redireciona ate tela de entidade
+    driver.get(page + 'EntidadesFilantropicas/CadastroNotaEntidadeAviso.aspx');
 
-  //Pagina do 'prosseguir'
-  driver.wait(until.elementLocated(By.xpath('//*[@id="ctl00_ConteudoPagina_btnOk"]')));
-  driver.findElement(By.xpath('//*[@id="ctl00_ConteudoPagina_btnOk"]')).click();
+    //Pagina do 'prosseguir'
+    driver.wait(until.elementLocated(By.xpath('//*[@id="ctl00_ConteudoPagina_btnOk"]')));
+    driver.findElement(By.xpath('//*[@id="ctl00_ConteudoPagina_btnOk"]')).click();
 
-  //escolhendo entidade
-  driver.wait(until.elementLocated(By.xpath('//*[@id="ddlEntidadeFilantropica"]/option[2]')));
-  driver.findElement(By.xpath('//*[@id="ddlEntidadeFilantropica"]/option[2]')).click();
-  driver.findElement(By.xpath('//*[@id="ctl00_ConteudoPagina_btnNovaNota"]')).click();
+    //escolhendo entidade
+    driver.wait(until.elementLocated(By.xpath('//*[@id="ddlEntidadeFilantropica"]/option[2]')));
+    driver.findElement(By.xpath('//*[@id="ddlEntidadeFilantropica"]/option[2]')).click();
+    driver.findElement(By.xpath('//*[@id="ctl00_ConteudoPagina_btnNovaNota"]')).click();
 
-  //Pagina de cadastro - confirmar 'DIV'
-  driver.wait(until.elementLocated(By.xpath('//*[@id="divPerguntaMaster"]')), 5000).then(function(){
-      driver.wait(until.elementLocated(By.xpath('//*[@id="ConteudoPrincipal"]/div[2]')));
-      driver.findElement(By.xpath('/html/body/div[4]/div[11]/div/button[1]/span')).click();
-      driver.findElement(By.xpath('/html/body/div[4]/div[11]/div/button[1]/span')).click();
+    //Pagina de cadastro - confirmar 'DIV'
+    driver.wait(until.elementLocated(By.xpath('//*[@id="divPerguntaMaster"]')), 5000).then(function(){
+        driver.wait(until.elementLocated(By.xpath('//*[@id="ConteudoPrincipal"]/div[2]')));
+        driver.findElement(By.xpath('/html/body/div[4]/div[11]/div/button[1]/span')).click();
+        driver.findElement(By.xpath('/html/body/div[4]/div[11]/div/button[1]/span')).click();
 
-      //Resolve Promessa
-      defer.resolve('OK');
+        //Resolve Promessa
+        resolve('OK');
 
-  //Possiveis erros do 'DIV'
-  }).catch(err =>{
+    //Possiveis erros do 'DIV'
+    }).catch(err =>{
 
-    //Rejeita Promessa
-    defer.reject(err);
+      //Rejeita Promessa
+      reject(err);
+    });
+
+    //Desce para o final da pagina
+    driver.executeScript('scroll(0,1000)');
   });
-
-  //Desce para o final da pagina
-  driver.executeScript('scroll(0,1000)');
-
-  //Retorna Promessa
-  return defer.promise;
 }
 
 //Salva um cupom Cadastrado
 var _saveCupom = function(){
 
   //Cria uma promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //Salvar Cupom
-  driver.findElement(By.xpath('//*[@id="btnSalvarNota"]')).sendKeys(Key.ENTER).then(function(){
+    //Salvar Cupom
+    driver.findElement(By.xpath('//*[@id="btnSalvarNota"]')).sendKeys(Key.ENTER).then(function(){
 
-    //Erro com 'DIV'
-    driver.findElement(By.xpath('//*[@id="lblErroMaster"]')).getText().then(function(innerHtml){
+      //Erro com 'DIV'
+      driver.findElement(By.xpath('//*[@id="lblErroMaster"]')).getText().then(function(innerHtml){
 
-      //Rejeita Promessa
-      if(innerHtml) defer.reject(innerHtml.replace(/\n\n\n\(Pressione ESC para fechar mensagem\)/,""));
+        //Rejeita Promessa
+        if(innerHtml) reject(innerHtml.replace(/\n\n\n\(Pressione ESC para fechar mensagem\)/,""));
 
-      //Sair da Erro
-      driver.findElement(By.xpath('/html/body/div[3]/div[11]/div/button/span')).click();
+        //Sair da Erro
+        driver.findElement(By.xpath('/html/body/div[3]/div[11]/div/button/span')).click();
 
-    //Erro sem 'DIV'
-    }).catch(err =>{
+      //Erro sem 'DIV'
+      }).catch(err =>{
 
-      //Erro Mensagem
-      driver.findElement(By.xpath('//*[@id="lblErro"]')).getText().then(function(innerHtml){
+        //Erro Mensagem
+        driver.findElement(By.xpath('//*[@id="lblErro"]')).getText().then(function(innerHtml){
 
-      //Rejeita Promessa
-      defer.reject(innerHtml);
+        //Rejeita Promessa
+        reject(innerHtml);
+        });
+
+      //Cadastro com Sucesso
+      }).catch(err =>{
+
+        //Resolve Promessa
+        resolve('OK');
+
+        //Representa apenas sucesso no cadastro e não na doação
       });
+    }).catch(err =>{console.log('Botão Salvar \n\n' + err + '\n\n')});
 
-    //Cadastro com Sucesso
-    }).catch(err =>{
-
-      //Resolve Promessa
-      defer.resolve('OK');
-
-      //Representa apenas sucesso no cadastro e não na doação
-    });
-  }).catch(err =>{console.log('Botão Salvar \n\n' + err + '\n\n')});
-
-  _clearFields();
-
-  //Retorna uma promessa
-  return defer.promise;
+    _clearFields();
+  });
 }
 
 //Limpa dados de cadastro
 var _clearFields = function(){
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  driver.findElement(By.xpath('//*[@id="divCaptcha"]/input')).clear().catch(err =>{});
+    driver.findElement(By.xpath('//*[@id="divCaptcha"]/input')).clear().catch(err =>{});
 
-  //Desce para o final da pagina
-  driver.executeScript('scroll(0,1000)');
+    //Desce para o final da pagina
+    driver.executeScript('scroll(0,1000)');
 
-  //Se é um cupom, limpa:
-  if(!isKey) driver.findElement(By.xpath('//*[@id="divCNPJEstabelecimento"]/input')).clear()//CNPJ
-              .then(driver.findElement(By.xpath('//*[@id="divtxtDtNota"]/input')).clear())//DATA
-              .then(driver.findElement(By.xpath('//*[@id="divtxtNrNota"]/input')).clear())//COO
-              .then(driver.findElement(By.xpath('//*[@id="divtxtVlNota"]/input')).clear())//VALOR
-              .then(function(){
+    //Se é um cupom, limpa:
+    if(!isKey) driver.findElement(By.xpath('//*[@id="divCNPJEstabelecimento"]/input')).clear()//CNPJ
+                .then(driver.findElement(By.xpath('//*[@id="divtxtDtNota"]/input')).clear())//DATA
+                .then(driver.findElement(By.xpath('//*[@id="divtxtNrNota"]/input')).clear())//COO
+                .then(driver.findElement(By.xpath('//*[@id="divtxtVlNota"]/input')).clear())//VALOR
+                .then(function(){
 
-                driver.findElement(By.xpath('//*[@id="divtxtVlNota"]/input')).sendKeys(Key.BACK_SPACE);
-                defer.resolve('OK');
-              }).catch(err =>{defer.reject(err)});
+                  driver.findElement(By.xpath('//*[@id="divtxtVlNota"]/input')).sendKeys(Key.BACK_SPACE);
+                  resolve('OK');
+                }).catch(err =>{reject(err)});
 
-  //Se é uma chave, limpa:
-  if (isKey) driver.findElement(By.xpath('//*[@id="divDocComChave"]/fieldset/input')).clear()//CHAVE
-              .then(function(){
+    //Se é uma chave, limpa:
+    if (isKey) driver.findElement(By.xpath('//*[@id="divDocComChave"]/fieldset/input')).clear()//CHAVE
+                .then(function(){
 
-                //Finish Clearing the Chave Input
-                driver.findElement(By.xpath('//*[@id="divDocComChave"]/fieldset/input')).sendKeys(Key.BACK_SPACE);
+                  //Finish Clearing the Chave Input
+                  driver.findElement(By.xpath('//*[@id="divDocComChave"]/fieldset/input')).sendKeys(Key.BACK_SPACE);
 
-                //Resolve a promessa
-                defer.resolve('OK')
-              }).catch(err =>{defer.reject(err)});
-
-  //Retorna uma promessa
-  return defer.promise;
+                  //Resolve a promessa
+                  resolve('OK')
+                }).catch(err =>{reject(err)});
+  });
 }
 
 //Retorna o Captcha para ser resolvido
 var _getCaptcha = function(){
 
   //Cria uma promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //Endereço
-  var address = 'http://localhost:8000';
+    //Endereço
+    var address = 'http://localhost:8000';
 
-  driver.findElement(By.xpath('//*[@id="captchaNFP"]')).then(urlCaptcha =>{
+    driver.findElement(By.xpath('//*[@id="captchaNFP"]')).then(urlCaptcha =>{
 
-    //Captura tela (Captcha)
-    driver.takeScreenshot().then(image =>{
+      //Captura tela (Captcha)
+      driver.takeScreenshot().then(image =>{
 
-      //Salva foto em arquivo
-      require('fs').writeFile('./image/captcha.png', image, 'base64', function(err){
+        //Salva foto em arquivo
+        require('fs').writeFile('./image/captcha.png', image, 'base64', function(err){
 
-        //Erro de Escrita
-        if(err) defer.reject(err);
+          //Erro de Escrita
+          if(err) reject(err);
 
-        //Resolve Promessa com endereço da imagem
-        else defer.resolve(address + '/image/captcha.png');
-      });
+          //Resolve Promessa com endereço da imagem
+          else resolve(address + '/image/captcha.png');
+        });
 
-      //Erro de Captura
-    }).catch(err =>{defer.reject(err)});
+        //Erro de Captura
+      }).catch(err =>{reject(err)});
 
-  //Captcha não existe
-  }).catch(err => {defer.reject(err);});
-
-
-  //Retorna a promessa
-  return defer.promise;
+    //Captcha não existe
+    }).catch(err => {reject(err);});
+  });
 }
 
 //Inseri informação do captcha
@@ -215,50 +206,48 @@ var _registerCupom = function(cupom){
   isKey = false;
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //formata data do cupom
-  cupom.data = _formatDate(cupom.data);
+    //formata data do cupom
+    cupom.data = _formatDate(cupom.data);
 
-  //Espera o carregamento do formulario
-  driver.wait(until.elementLocated(By.xpath('//*[@id="divCNPJEstabelecimento"]/input'))).then(function(){
+    //Espera o carregamento do formulario
+    driver.wait(until.elementLocated(By.xpath('//*[@id="divCNPJEstabelecimento"]/input'))).then(function(){
 
-    //Espera 1 segundo para recarregamento
-    driver.wait(until.elementLocated(By.xpath('Weird')), 100).catch(err=>{});
+      //Espera 1 segundo para recarregamento
+      driver.wait(until.elementLocated(By.xpath('Weird')), 100).catch(err=>{});
 
-    //Inserção das informações do cupom
-    driver.findElement(By.xpath('//*[@id="divCNPJEstabelecimento"]/input')).sendKeys(cupom.cnpj);//CNPJ
-    driver.findElement(By.xpath('//*[@id="divtxtDtNota"]/input')).sendKeys(cupom.data);//DATA
-    driver.findElement(By.xpath('//*[@id="divtxtNrNota"]/input')).sendKeys(cupom.coo);//COO
-    driver.findElement(By.xpath('//*[@id="divtxtVlNota"]/input')).sendKeys(cupom.valor);//VALOR
-    driver.findElement(By.xpath('//*[@id="divCaptcha"]/input')).sendKeys(captcha).catch(err =>{});//CAPTCHA
+      //Inserção das informações do cupom
+      driver.findElement(By.xpath('//*[@id="divCNPJEstabelecimento"]/input')).sendKeys(cupom.cnpj);//CNPJ
+      driver.findElement(By.xpath('//*[@id="divtxtDtNota"]/input')).sendKeys(cupom.data);//DATA
+      driver.findElement(By.xpath('//*[@id="divtxtNrNota"]/input')).sendKeys(cupom.coo);//COO
+      driver.findElement(By.xpath('//*[@id="divtxtVlNota"]/input')).sendKeys(cupom.valor);//VALOR
+      driver.findElement(By.xpath('//*[@id="divCaptcha"]/input')).sendKeys(captcha).catch(err =>{});//CAPTCHA
 
-    //Salva cupom no site
-    _saveCupom().then(result =>{
+      //Salva cupom no site
+      _saveCupom().then(result =>{
 
-      //Após o envio limpa os campos
-      _clearFields().then(result =>{
+        //Após o envio limpa os campos
+        _clearFields().then(result =>{
 
-        //Retorna um cadastro com Sucesso
-        defer.resolve(result);
+          //Retorna um cadastro com Sucesso
+          resolve(result);
 
-      }).catch(err =>{});
+        }).catch(err =>{});
 
-    }).catch(err =>{
+      }).catch(err =>{
 
-      //Após o envio limpa os campos
-      _clearFields().then(result =>{
+        //Após o envio limpa os campos
+        _clearFields().then(result =>{
 
-        //Retorna um cadastro com Falha
-        defer.reject(err);
+          //Retorna um cadastro com Falha
+          reject(err);
 
-      }).catch(err =>{});
+        }).catch(err =>{});
 
+      });
     });
   });
-
-  //Retorna uma promessa
-  return defer.promise;
 }
 
 //Registra uma chave
@@ -268,60 +257,56 @@ var _registerChave = function(chave){
   isKey = true;
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
+    //Espera o carregamento do formulario
+    driver.wait(until.elementLocated(By.xpath('//*[@id="divCNPJEstabelecimento"]/input'))).then(function(){
 
-  //Espera o carregamento do formulario
-  driver.wait(until.elementLocated(By.xpath('//*[@id="divCNPJEstabelecimento"]/input'))).then(function(){
+      //Espera 0.2 segundo para recarregamento
+      driver.wait(until.elementLocated(By.xpath('Weird')), 200).catch(err=>{});
 
-    //Espera 0.2 segundo para recarregamento
-    driver.wait(until.elementLocated(By.xpath('Weird')), 200).catch(err=>{});
+      //Limpa o campo da chave
+      driver.findElement(By.xpath('//*[@id="divDocComChave"]/fieldset/input')).clear();
 
-    //Limpa o campo da chave
-    driver.findElement(By.xpath('//*[@id="divDocComChave"]/fieldset/input')).clear();
+      //Inseri Informações da chave
+      driver.findElement(By.xpath('//*[@id="divDocComChave"]/fieldset/input')).sendKeys(chave.valor);//CHAVE
+      driver.findElement(By.xpath('//*[@id="divCaptcha"]/input')).sendKeys(captcha).catch(err =>{});//CAPTCHA
 
-    //Inseri Informações da chave
-    driver.findElement(By.xpath('//*[@id="divDocComChave"]/fieldset/input')).sendKeys(chave.valor);//CHAVE
-    driver.findElement(By.xpath('//*[@id="divCaptcha"]/input')).sendKeys(captcha).catch(err =>{});//CAPTCHA
+      //Salva cupom no site
+      _saveCupom().then(result =>{
 
-    //Salva cupom no site
-    _saveCupom().then(result =>{
+        //Após o envio limpa os campos
+        _clearFields().then(result =>{
 
-      //Após o envio limpa os campos
-      _clearFields().then(result =>{
+          //Retorna um cadastro com Sucesso
+          resolve(result);
 
-        //Retorna um cadastro com Sucesso
-        defer.resolve(result);
+        }).catch(err =>{});
 
-      }).catch(err =>{});
+      }).catch(err =>{
 
-    }).catch(err =>{
+        //Após o envio limpa os campos
+        _clearFields().then(result =>{
 
-      //Após o envio limpa os campos
-      _clearFields().then(result =>{
+          //Retorna um cadastro com Falha
+          reject(err);
 
-        //Retorna um cadastro com Falha
-        defer.reject(err);
-
-      }).catch(err =>{});
+        }).catch(err =>{});
+      });
     });
+
+    _clearFields();
   });
-
-  _clearFields();
-
-  //Retorna uma promessa
-  return defer.promise;
 }
 
 //Fecha o navegador
 var _closeBrowser = function(){
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  driver.quit().then(result =>{defer.resolve('OK')})
-               .catch(err =>{defer.reject(err)});
-
-  return defer.promise;
+    driver.quit().then(result =>{resolve('OK')})
+                 .catch(err =>{reject(err)});
+  });
 }
 
 //Funções a serem exportadas (Usadas por outros arquivos)
