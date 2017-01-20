@@ -16,44 +16,42 @@ var _selectCupom = function(estado){
   client.connect();
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise(() => {
 
-  //Query seleciona todos os cupons
-  var query;
+    //Query seleciona todos os cupons
+    var query;
 
-  //Seleciona cupons
-  if(!estado) query = client.query('SELECT * FROM cupons WHERE estado!=1 AND estado!=2');
-  if(estado)  query = client.query('SELECT * FROM cupons WHERE estado=$1', [estado]);
+    //Seleciona cupons
+    if(!estado) query = client.query('SELECT * FROM cupons WHERE estado!=1 AND estado!=2');
+    if(estado)  query = client.query('SELECT * FROM cupons WHERE estado=$1', [estado]);
 
-  //Adciona cada linha da tabela
-  query.on('row', function (row, result) {
+    //Adciona cada linha da tabela
+    query.on('row', function (row, result) {
 
-    result.addRow(row);
+      result.addRow(row);
+    });
+
+    //Termino da Query
+    query.on('end', function (result) {
+
+      //Termina a conexão
+      client.end();
+
+      //Resolve Promessa
+      resolve(result.rows);
+    });
   });
-
-  //Termino da Query
-  query.on('end', function (result) {
-
-    //Termina a conexão
-    client.end();
-
-    //Resolve Promessa
-    defer.resolve(result.rows);
-  });
-
-  //Retorna Promessa
-  return defer.promise;
 }
 
 //Atualiza estado de um cupom especifico
 var _updateCupom = function(cupom){
 
-    //Conecta com Postgres
-    var client = new pg.Client(connectionString);
-    client.connect();
+  //Conecta com Postgres
+  var client = new pg.Client(connectionString);
+  client.connect();
 
-    //Cria uma Promessa
-    var defer = Promise.defer();
+  //Cria uma Promessa
+  return new Promise((resolve, reject) => {
 
     //Query Atualiza todos os cupons
     var query = client.query('UPDATE cupons SET estado=$1 WHERE coo=$2',[cupom.estado, cupom.coo]).then(function(){
@@ -62,16 +60,14 @@ var _updateCupom = function(cupom){
       client.end();
 
       //Resolve Promessa ao fim da Query
-      defer.resolve('OK');
+      resolve('OK');
 
     }, function(err){
 
       //Rejeita Promessa
-      defer.reject(err);
+      reject(err);
     });
-
-  //Retorna Promessa
-  return defer.promise;
+  });
 }
 
 //Deleta um cupom
@@ -81,26 +77,23 @@ var _deleteCupom = function(cupom){
   var client = new pg.Client(connectionString);
   client.connect();
 
-  //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //Query para deletar um cupom expecifico
-  client.query('DELETE FROM cupons WHERE coo=$1',[cupom.coo]).then(function(){
+    //Query para deletar um cupom expecifico
+    client.query('DELETE FROM cupons WHERE coo=$1',[cupom.coo]).then(function(){
 
-    //Termina a conexão
-    client.end();
+      //Termina a conexão
+      client.end();
 
-    //Resolve Promessa ao fim da Query
-    defer.resolve('OK');
+      //Resolve Promessa ao fim da Query
+      resolve('OK');
 
-  }, function(err){
+    }, function(err){
 
-    //Rejeita Promessa
-    defer.reject(err);
+      //Rejeita Promessa
+      reject(err);
+    });
   });
-
-  //Retorna Promessa
-  return defer.promise;
 }
 
 var _qtdCupom = function(date){
@@ -109,32 +102,29 @@ var _qtdCupom = function(date){
   var client = new pg.Client(connectionString);
   client.connect();
 
-  //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //Quantidade de cada estado
-  if(date.year)      var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year, EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM cupons GROUP BY estado, year, month HAVING EXTRACT(YEAR FROM data)=$1 AND EXTRACT(MONTH FROM data)=$2',[date.year, date.month]);
-  else if(date.show) var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year, EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM cupons GROUP BY estado, year, month');
-  else               var query = client.query('SELECT estado, COUNT(*) AS quantity FROM cupons GROUP BY estado');
+    //Quantidade de cada estado
+    if(date.year)      var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year, EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM cupons GROUP BY estado, year, month HAVING EXTRACT(YEAR FROM data)=$1 AND EXTRACT(MONTH FROM data)=$2',[date.year, date.month]);
+    else if(date.show) var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year, EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM cupons GROUP BY estado, year, month');
+    else               var query = client.query('SELECT estado, COUNT(*) AS quantity FROM cupons GROUP BY estado');
 
-  //Adciona cada linha da tabela
-  query.on('row', function (row, result) {
+    //Adciona cada linha da tabela
+    query.on('row', function (row, result) {
 
-    result.addRow(row);
+      result.addRow(row);
+    });
+
+    //Termino da Query
+    query.on('end', function (result) {
+
+      //Termina a conexão
+      client.end();
+
+      //Resolve Promessa
+      resolve(result.rows);
+    });
   });
-
-  //Termino da Query
-  query.on('end', function (result) {
-
-    //Termina a conexão
-    client.end();
-
-    //Resolve Promessa
-    defer.resolve(result.rows);
-  });
-
-  //Retorna Promessa
-  return defer.promise;
 }
 
 //Funções a serem exportadas (Usadas por outros arquivos)

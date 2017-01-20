@@ -16,41 +16,39 @@ var _selectChave = function(estado){
   client.connect();
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((result, resolve) => {
 
-  //Query seleciona todas as chaves
-  if(!estado) var query = client.query('SELECT * FROM chaves WHERE estado!=1 AND estado!=2');
-  if(estado)  var query = client.query('SELECT * FROM chaves WHERE estado=$1',[estado]);
+    //Query seleciona todas as chaves
+    if(!estado) var query = client.query('SELECT * FROM chaves WHERE estado!=1 AND estado!=2');
+    if(estado)  var query = client.query('SELECT * FROM chaves WHERE estado=$1',[estado]);
 
-  //Adciona cada linha da tabela
-  query.on('row', function (row, result) {
+    //Adciona cada linha da tabela
+    query.on('row', function (row, result) {
 
-    result.addRow(row);
+      result.addRow(row);
+    });
+
+    //Termino da Query
+    query.on('end', function (result) {
+
+      //Termina a conexão
+      client.end();
+
+      //Resolve Promessa
+      resolve(result.rows);
+    });
   });
-
-  //Termino da Query
-  query.on('end', function (result) {
-
-    //Termina a conexão
-    client.end();
-
-    //Resolve Promessa
-    defer.resolve(result.rows);
-  });
-
-  //Retorna Promessa
-  return defer.promise;
 }
 
 //Atualiza estado de uma chave especifica
 var _updateChave = function(chave){
 
-    //Conecta com Postgres
-    var client = new pg.Client(connectionString);
-    client.connect();
+  //Conecta com Postgres
+  var client = new pg.Client(connectionString);
+  client.connect();
 
-    //Cria uma Promessa
-    var defer = Promise.defer();
+  //Cria uma Promessa
+  return new Promise((result, resolve) => {
 
     //Query Atualiza todos os cupons
     var query = client.query('UPDATE chaves SET estado=$1 WHERE valor=$2',[chave.estado, chave.valor]).then(function(){
@@ -59,16 +57,14 @@ var _updateChave = function(chave){
       client.end();
 
       //Resolve Promessa ao fim da Query
-      defer.resolve('OK');
+      resolve('OK');
 
     }, function(err){
 
       //Rejeita Promessa
-      defer.reject(err);
+      reject(err);
     });
-
-  //Retorna Promessa
-  return defer.promise;
+  });
 }
 
 
@@ -80,25 +76,23 @@ var _deleteChave = function(chave){
   client.connect();
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //Query para deletar um cupom expecifico
-  client.query('DELETE FROM chaves WHERE valor=$1',[chave.valor]).then(function(){
+    //Query para deletar um cupom expecifico
+    client.query('DELETE FROM chaves WHERE valor=$1',[chave.valor]).then(function(){
 
-    //Termina a conexão
-    client.end();
+      //Termina a conexão
+      client.end();
 
-    //Resolve Promessa ao fim da Query
-    defer.resolve('OK');
+      //Resolve Promessa ao fim da Query
+      resolve('OK');
 
-  }, function(err){
+    }, function(err){
 
-    //Rejeita Promessa
-    defer.reject(err);
+      //Rejeita Promessa
+      reject(err);
+    });
   });
-
-  //Retorna Promessa
-  return defer.promise;
 }
 
 //Seleciona todas as chaves
@@ -109,31 +103,29 @@ var _qtdChave = function(date){
   client.connect();
 
   //Cria uma Promessa
-  var defer = Promise.defer();
+  return new Promise((resolve, reject) => {
 
-  //Quantidade de cada estado
-  if(!date.year) var query = client.query('SELECT estado, COUNT(*) AS quantity FROM chaves GROUP BY estado');
-  else           var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year,  EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM chaves GROUP BY estado, year, month');
+    //Quantidade de cada estado
+    if(!date.year) var query = client.query('SELECT estado, COUNT(*) AS quantity FROM chaves GROUP BY estado');
+    else           var query = client.query('SELECT estado, EXTRACT(YEAR FROM data) AS year,  EXTRACT(MONTH FROM data) AS month, COUNT(*) AS quantity FROM chaves GROUP BY estado, year, month');
 
 
-  //Adciona cada linha da tabela
-  query.on('row', function (row, result) {
+    //Adciona cada linha da tabela
+    query.on('row', function (row, result) {
 
-    result.addRow(row);
+      result.addRow(row);
+    });
+
+    //Termino da Query
+    query.on('end', function (result) {
+
+      //Termina a conexão
+      client.end();
+
+      //Resolve Promessa
+      resolve(result.rows);
+    });
   });
-
-  //Termino da Query
-  query.on('end', function (result) {
-
-    //Termina a conexão
-    client.end();
-
-    //Resolve Promessa
-    defer.resolve(result.rows);
-  });
-
-  //Retorna Promessa
-  return defer.promise;
 }
 
 //Funções a serem exportadas (Usadas por outros arquivos)
