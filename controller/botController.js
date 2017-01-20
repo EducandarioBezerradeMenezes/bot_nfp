@@ -46,16 +46,10 @@ router.route('/cupom')
         Navigator.registerCupom(cupom).then(result =>{
 
           //Altera estado do cupom para 1 (Sucesso)
-          cupom.estado = 1;
+          cupom.estado = 'cadastrado';
 
           //Atualiza cupom no banco
           Cupom.updateCupom(cupom).then(result =>{
-
-            //Mensagem de Sucesso
-            console.log('Cupom:');
-            console.log(cupom);
-            console.log(': Cadastrado com sucesso.\n');
-            console.log();
 
             //Envia resposta se primeira iteração
             if(first){
@@ -65,25 +59,18 @@ router.route('/cupom')
           });
         }).catch(err => {
 
-          //Altera estado do cupom para 2 (Falha de Cadastro)
-          cupom.estado = 2;
+          //Altera estado do cupom para (Falha de Cadastro)
+          cupom.estado = 'cadastro erro';
 
-          //Altera estado do cupom para 3 (Falha de Captcha)
-          if(err.match(/Captcha/)) cupom.estado = 3;
+          //Altera estado do cupom para (Falha de Captcha)
+          if(err.match(/Captcha/)) cupom.estado = 'captcha erro';
 
           //Atualiza cupom no banco
           Cupom.updateCupom(cupom).then(result =>{
 
-            //Mensagem de Erro
-            console.error('Cupom:');
-            console.error(cupom);
-            console.error(': Erro no Cadastro:');
-            console.error(err);
-            console.error();
-
             //Envia resposta se primeira iteração
             if(first){
-              res.json(err);
+              res.status(412).send(err);
               first = false;
             }
 
@@ -91,7 +78,7 @@ router.route('/cupom')
         });
       });
     //Erro geral
-    }).catch(err =>{res.json(err)});
+  }).catch(err =>{res.status(412).send(err)});
   });
 
 //Metodos para a rota /chave
@@ -117,16 +104,10 @@ router.route('/chave')
         Navigator.registerChave(chave).then(result =>{
 
           //Altera estado do cupom para 1 (Sucesso)
-          chave.estado = 1;
+          chave.estado = 'cadastrado';
 
           //Atualiza cupom no banco
           Chave.updateChave(chave).then(result =>{
-
-            //Mensagem de Sucesso
-            console.log('Chave:');
-            console.log(chave);
-            console.log(': Cadastrada com sucesso.\n');
-            console.log();
 
             //Envia resposta se primeira iteração
             if(first){
@@ -136,25 +117,18 @@ router.route('/chave')
           });
         }).catch(err => {
 
-          //Altera estado da chave para 2 (Falha de Cadastro)
-          chave.estado = 2;
+          //Altera estado da chave para (Falha de Cadastro)
+          chave.estado = 'cadastro erro';
 
-          //Altera estado da chave para 3 (Falha de Captcha)
-          if(err.match(/Captcha/)) chave.estado = 3;
+          //Altera estado da chave para (Falha de Captcha)
+          if(err.match(/Captcha/)) chave.estado = 'captcha erro';
 
           //Atualiza chave no banco
           Chave.updateChave(chave).then(result =>{
 
-            //Mensagem de Erro
-            console.error('Chave:');
-            console.error(chave);
-            console.error(': Erro no Cadastro:');
-            console.error(err = err.replace(/\n\n\n\(Pressione ESC para fechar mensagem\)/,""));
-            console.error();
-
             //Envia resposta se primeira iteração
             if(first){
-              res.json(err);
+              res.status(412).send(err)
               first = false;
             }
 
@@ -162,9 +136,7 @@ router.route('/chave')
         });
       });
     //Erro geral
-    }).catch(err =>{
-      console.log(err);
-      res.json(err)});
+    }).catch(err =>{res.status(412).send(err)});
   });
 
 //Metodos para a rota /captcha
@@ -179,7 +151,7 @@ router.route('/captcha')
       res.json(result);
 
     //Captcha já Resolvido
-    }).catch(err =>{res.json('No Captcha')});
+  }).catch(err =>{res.status(404).send('No Captcha')});
   });
 
 //Metodos para a rota /captcha
