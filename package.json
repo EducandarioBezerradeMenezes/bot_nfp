@@ -4,7 +4,7 @@
   "description": "Bot que Cadastra cupons no site da receita federal",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "bin": {
 

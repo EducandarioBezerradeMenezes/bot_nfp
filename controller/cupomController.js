@@ -20,7 +20,7 @@ router.route('/cupom')
     //Retorna estados e suas quantidades
     Cupom.qtdCupom(req.body).then(result =>{
       res.json(result);
-    }).catch(err =>{res.json(err)});
+    }).catch(err =>{res.status(500).send(err)});
   });
 
 //Metodos para a rota /chave
@@ -32,7 +32,7 @@ router.route('/chave')
     //Retorna estados e suas quantidades
     Chave.qtdChave(req.body).then(result =>{
       res.json(result);
-    }).catch(err =>{res.json(err)});
+    }).catch(err =>{res.status(500).send(err)});
   });
 
 //Exporting Routes

@@ -183,7 +183,7 @@ var _getCaptcha = function(){
           if(err) reject(err);
 
           //Resolve Promessa com endereço da imagem
-          else resolve(address + '/image/captcha.png');
+          else resolve('/image/captcha.png');
         });
 
         //Erro de Captura
